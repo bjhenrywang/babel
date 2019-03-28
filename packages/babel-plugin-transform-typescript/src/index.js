@@ -3,6 +3,7 @@ import syntaxTypeScript from "@babel/plugin-syntax-typescript";
 import { types as t } from "@babel/core";
 
 import transpileEnum from "./enum";
+import transpileNamespace from "./namespace";
 
 function isInType(path) {
   switch (path.parent.type) {
@@ -239,10 +240,7 @@ export default declare((api, { jsxPragma = "React" }) => {
       },
 
       TSModuleDeclaration(path) {
-        if (!path.node.declare && path.node.id.type !== "StringLiteral") {
-          throw path.buildCodeFrameError("Namespaces are not supported.");
-        }
-        path.remove();
+        transpileNamespace(path, t);
       },
 
       TSInterfaceDeclaration(path) {
